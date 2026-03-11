@@ -93,7 +93,8 @@ export default function App() {
   const loadEventConfig = async (eventId: string) => {
     setIsLoading(true);
     try {
-      const configRes = await fetch(`/event_info/${eventId}.json`);
+      // use Vite's BASE_URL so paths work both in dev ("/") and production ("/Findyourseat/")
+    const configRes = await fetch(`${import.meta.env.BASE_URL}event_info/${eventId}.json`);
       if (!configRes.ok) throw new Error('Config file not found');
       const config = await configRes.json();
       

@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://<YOUR_GITHUB_USERNAME>.github.io/Findyourseat",
+  "homepage": "https://msburberryy-web.github.io/Findyourseat",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",

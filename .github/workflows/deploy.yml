@@ -9,6 +9,9 @@ on:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    # opt into Node.js 24 for JavaScript actions to silence deprecation warnings
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: "Checkout repository"
@@ -29,8 +32,12 @@ jobs:
       - name: "Configure git identity"
         run: |
           # gh-pages will create commits; make sure git has a valid user/email
+          # set both global (for any git invocation) and local config (safer inside repo)
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config --list   # debug: show what we configured
 
       - name: "Build & deploy"
         env:
