@@ -26,6 +26,12 @@ jobs:
       - name: "Install dependencies"
         run: npm ci
 
+      - name: "Configure git identity"
+        run: |
+          # gh-pages will create commits; make sure git has a valid user/email
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
       - name: "Build & deploy"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
