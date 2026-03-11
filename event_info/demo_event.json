@@ -1,0 +1,11 @@
+{
+  "googleSheetId": "",
+  "eventName": "New Year Demo Event",
+  "eventDate": "2026-01-01",
+  "guests": [
+    { "name": "MMMM", "tableNumber": 1 },
+    { "name": "James Wilson", "tableNumber": 1 },
+    { "name": "Sarah Johnson", "tableNumber": 2 },
+    { "name": "Michael Brown", "tableNumber": 2 }
+  ]
+}

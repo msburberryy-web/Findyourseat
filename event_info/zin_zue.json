@@ -1,0 +1,12 @@
+{
+  "googleSheetId": "1jAjKm002bZZeaekdqPyrgTuzo8spHa26yx3PlYf9mKg",
+  "eventName": "Zin & Zue Wedding",
+  "eventDate": "2025-12-12",
+  "guests": [
+    { "name": "Zin", "tableNumber": "Main" },
+    { "name": "Zue", "tableNumber": "Main" },
+    { "name": "May", "tableNumber": 1 },
+    { "name": "OO", "tableNumber": 2 },
+    { "name": "Find", "tableNumber": 2 }
+  ]
+}
