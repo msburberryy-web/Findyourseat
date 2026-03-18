@@ -93,8 +93,17 @@ export default function App() {
   const loadEventConfig = async (eventId: string) => {
     setIsLoading(true);
     try {
-      const configRes = await fetch(`/event_info/${eventId}.json`);
-      if (!configRes.ok) throw new Error('Config file not found');
+      // Use relative path or BASE_URL to support GitHub Pages subpaths
+      const baseUrl = import.meta.env.BASE_URL || './';
+      const configPath = `${baseUrl}event_info/${eventId}.json`.replace(/\/+/g, '/');
+      
+      console.log('Loading event config from:', configPath);
+      
+      const configRes = await fetch(configPath);
+      if (!configRes.ok) {
+        console.error(`Failed to load config from ${configPath}: ${configRes.status} ${configRes.statusText}`);
+        throw new Error('Config file not found');
+      }
       const config = await configRes.json();
       
       if (config.googleSheetId && extractSheetId(config.googleSheetId)) {
