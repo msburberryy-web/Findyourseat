@@ -8,6 +8,33 @@ import { twMerge } from 'tailwind-merge';
 import { Guest } from './types';
 import { sampleGuests } from './data/sampleGuests';
 
+function SeatDiagram({ table, seat, total, sweetheart, guide }: { table: string | number; seat: number; total: number; sweetheart: string; guide: string }) {
+  const cx = 150, cy = 175, r = 62, sr = 78;
+  return (
+    <div className="w-full flex flex-col items-center mt-6 pt-6 border-t border-stone-100">
+      <svg viewBox="0 0 300 280" className="w-full max-w-[280px]" role="img" aria-label={`${guide}`}>
+        <rect x="70" y="8" width="160" height="34" rx="17" fill="none" stroke="#D4AF37" strokeWidth="1.5" />
+        <text x="150" y="30" textAnchor="middle" fontSize="12" fill="#a8892a" fontFamily="Playfair Display, serif">♥ {sweetheart} ♥</text>
+        <circle cx={cx} cy={cy} r={r} fill="#FDFCF0" stroke="#d6d3d1" strokeWidth="1.5" />
+        <text x={cx} y={cy + 10} textAnchor="middle" fontSize="30" fill="#44403c" fontFamily="Playfair Display, serif">{table}</text>
+        {Array.from({ length: total }, (_, i) => {
+          const n = i + 1;
+          const ang = -Math.PI / 2 + (2 * Math.PI * i) / total; // seat 1 at top (nearest sweetheart), clockwise
+          const x = cx + sr * Math.cos(ang), y = cy + sr * Math.sin(ang);
+          const on = n === seat;
+          return (
+            <g key={n}>
+              <circle cx={x} cy={y} r={on ? 15 : 12} fill={on ? '#D4AF37' : '#ffffff'} stroke={on ? '#D4AF37' : '#d6d3d1'} strokeWidth="1.5" />
+              <text x={x} y={y + 4.5} textAnchor="middle" fontSize={on ? 14 : 12} fontWeight={on ? 700 : 400} fill={on ? '#ffffff' : '#78716c'} fontFamily="Inter, sans-serif">{n}</text>
+            </g>
+          );
+        })}
+      </svg>
+      <p className="text-stone-500 text-xs text-center max-w-xs leading-relaxed mt-2">{guide}</p>
+    </div>
+  );
+}
+
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -16,6 +43,9 @@ type Language = 'en' | 'ja' | 'my';
 
 const translations = {
   en: {
+    seatNumber: "Seat",
+    sweetheart: "Sweetheart Table",
+    seatGuide: "Seat 1 is nearest the sweetheart table; seats continue clockwise.",
     presentedBy: "Presented By",
     findSeat: "Please Find Your Seat",
     searchPlaceholder: "Search your name...",
@@ -30,6 +60,9 @@ const translations = {
     syncList: "Sync Guest List",
   },
   ja: {
+    seatNumber: "座席番号",
+    sweetheart: "高砂席",
+    seatGuide: "1番は高砂席に一番近いお席です。番号は時計回りに続きます。",
     presentedBy: "プロデュース",
     findSeat: "お席をご確認ください",
     searchPlaceholder: "お名前を検索...",
@@ -44,6 +77,9 @@ const translations = {
     syncList: "ゲストリストを同期",
   },
   my: {
+    seatNumber: "ထိုင်ခုံအမှတ်",
+    sweetheart: "သတို့သားသတို့သမီး စားပွဲ",
+    seatGuide: "ထိုင်ခုံ ၁ သည် သတို့သားသတို့သမီး စားပွဲနှင့် အနီးဆုံးဖြစ်ပြီး နာရီလက်တံအတိုင်း ဆက်လက်စီထားပါသည်။",
     presentedBy: "စီစဉ်တင်ဆက်သူ",
     findSeat: "သင်၏ထိုင်ခုံကို ရှာဖွေပါ",
     searchPlaceholder: "သင်၏အမည်ကို ရှာဖွေပါ...",
@@ -69,6 +105,7 @@ export default function App() {
 
   const [googleSheetId, setGoogleSheetId] = useState('');
   const [eventName, setEventName] = useState('Event Seating');
+  const [seatsPerTable, setSeatsPerTable] = useState(8);
 
   const extractSheetId = (input: string) => {
     if (!input) return '';
@@ -112,6 +149,7 @@ export default function App() {
         fetchGoogleSheetData(config.googleSheetId);
       } else if (config.guests && Array.isArray(config.guests)) {
         if (config.eventName) setEventName(config.eventName);
+        if (config.seatsPerTable) setSeatsPerTable(Number(config.seatsPerTable));
         setGuests(config.guests);
         setGoogleSheetId(''); // Clear sheet ID if using local data
       }
@@ -336,8 +374,9 @@ export default function App() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
                     key={`${guest.name}-${index}`}
-                    className="bg-white/50 backdrop-blur-sm p-6 md:p-10 rounded-3xl border border-stone-100 flex flex-col md:flex-row justify-between items-center group hover:bg-white hover:shadow-2xl hover:shadow-gold/5 transition-all duration-500"
+                    className="bg-white/50 backdrop-blur-sm p-6 md:p-10 rounded-3xl border border-stone-100 group hover:bg-white hover:shadow-2xl hover:shadow-gold/5 transition-all duration-500"
                   >
+                    <div className="flex flex-col md:flex-row justify-between items-center">
                     <div className="flex items-center gap-6 mb-4 md:mb-0">
                       <div className="w-12 h-12 rounded-full border border-gold/20 flex items-center justify-center text-stone-400 group-hover:bg-gold group-hover:text-white group-hover:border-gold transition-all duration-500 shadow-sm">
                         <User size={20} />
@@ -352,6 +391,18 @@ export default function App() {
                         {guest.tableNumber}
                       </span>
                     </div>
+                    {guest.seatNumber !== undefined && guest.seatNumber !== '' && (
+                      <div className="flex flex-col items-center md:items-end md:ml-10 mt-4 md:mt-0">
+                        <span className="text-gold text-[10px] font-bold uppercase tracking-[0.3em] mb-1">{t.seatNumber}</span>
+                        <span className="font-serif text-4xl md:text-6xl text-stone-800 group-hover:scale-110 transition-transform duration-500">
+                          {guest.seatNumber}
+                        </span>
+                      </div>
+                    )}
+                    </div>
+                    {guest.seatNumber !== undefined && guest.seatNumber !== '' && (
+                      <SeatDiagram table={guest.tableNumber} seat={Number(guest.seatNumber)} total={seatsPerTable} sweetheart={t.sweetheart} guide={t.seatGuide} />
+                    )}
                   </motion.div>
                 ))}
               </motion.div>
