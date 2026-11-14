@@ -8,13 +8,53 @@ import { twMerge } from 'tailwind-merge';
 import { Guest } from './types';
 import { sampleGuests } from './data/sampleGuests';
 
+function FloorPlan({ rows, tables, sweetheart, title }: { rows: string[][]; tables: (string | number)[]; sweetheart: string; title: string }) {
+  const hl = new Set(tables.map(String));
+  const cols = Math.max(...rows.map(r => r.length));
+  const W = 320, top = 80, rowGap = 64, R = 21;
+  const colX = (i: number) => 40 + (i * (W - 80)) / Math.max(cols - 1, 1);
+  const H = top + rowGap * (rows.length - 1) + R + 14;
+  return (
+    <div className="w-full flex flex-col items-center bg-white/50 backdrop-blur-sm p-6 rounded-3xl border border-stone-100">
+      <span className="text-gold text-[10px] font-bold uppercase tracking-[0.3em] mb-3">{title}</span>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[340px]" role="img" aria-label={title}>
+        <rect x={W / 2 - 95} y="6" width="190" height="30" rx="4" fill="#FDFCF0" stroke="#D4AF37" strokeWidth="1.5" />
+        <text x={W / 2} y="26" textAnchor="middle" fontSize="12" fill="#a8892a" fontFamily="Playfair Display, Noto Serif Myanmar, serif">♥ {sweetheart} ♥</text>
+        {rows.map((row, ri) =>
+          row.map((name, ci) => {
+            const on = hl.has(String(name));
+            const x = colX(ci), y = top + ri * rowGap;
+            return (
+              <g key={name}>
+                <circle cx={x} cy={y} r={on ? R + 3 : R} fill={on ? '#D4AF37' : '#ffffff'} stroke={on ? '#D4AF37' : '#d6d3d1'} strokeWidth="1.5" />
+                <text x={x} y={y + 6} textAnchor="middle" fontSize={on ? 18 : 16} fontWeight={on ? 700 : 400} fill={on ? '#ffffff' : '#78716c'} fontFamily="Playfair Display, serif">{name}</text>
+              </g>
+            );
+          })
+        )}
+      </svg>
+    </div>
+  );
+}
+
 function SeatDiagram({ table, seat, total, sweetheart, guide }: { table: string | number; seat: number; total: number; sweetheart: string; guide: string }) {
   const cx = 150, cy = 175, r = 62, sr = 78;
   return (
     <div className="w-full flex flex-col items-center mt-6 pt-6 border-t border-stone-100">
       <svg viewBox="0 0 300 280" className="w-full max-w-[280px]" role="img" aria-label={`${guide}`}>
         <rect x="70" y="8" width="160" height="34" rx="17" fill="none" stroke="#D4AF37" strokeWidth="1.5" />
-        <text x="150" y="30" textAnchor="middle" fontSize="12" fill="#a8892a" fontFamily="Playfair Display, serif">♥ {sweetheart} ♥</text>
+        <text x="150" y="30" textAnchor="middle" fontSize="12" fill="#a8892a" fontFamily="Playfair Display, Noto Serif Myanmar, serif">♥ {sweetheart} ♥</text>
+        <defs>
+          <marker id="cw-head" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#D4AF37" />
+          </marker>
+        </defs>
+        {(() => {
+          const ar = 103, a1 = (-78 * Math.PI) / 180, a2 = (-50 * Math.PI) / 180;
+          const x1 = cx + ar * Math.cos(a1), y1 = cy + ar * Math.sin(a1);
+          const x2 = cx + ar * Math.cos(a2), y2 = cy + ar * Math.sin(a2);
+          return <path d={`M${x1},${y1} A${ar},${ar} 0 0 1 ${x2},${y2}`} fill="none" stroke="#D4AF37" strokeWidth="1.5" markerEnd="url(#cw-head)" />;
+        })()}
         <circle cx={cx} cy={cy} r={r} fill="#FDFCF0" stroke="#d6d3d1" strokeWidth="1.5" />
         <text x={cx} y={cy + 10} textAnchor="middle" fontSize="30" fill="#44403c" fontFamily="Playfair Display, serif">{table}</text>
         {Array.from({ length: total }, (_, i) => {
@@ -30,7 +70,7 @@ function SeatDiagram({ table, seat, total, sweetheart, guide }: { table: string 
           );
         })}
       </svg>
-      <p className="text-stone-500 text-xs text-center max-w-xs leading-relaxed mt-2">{guide}</p>
+      <p className="text-stone-500 text-xs text-center max-w-xs leading-relaxed mt-2" style={{ textWrap: "balance" } as React.CSSProperties}>{guide}</p>
     </div>
   );
 }
@@ -43,9 +83,10 @@ type Language = 'en' | 'ja' | 'my';
 
 const translations = {
   en: {
+    roomLayout: "Room Layout",
     seatNumber: "Seat",
     sweetheart: "Sweetheart Table",
-    seatGuide: "Seat 1 is nearest the sweetheart table; seats continue clockwise.",
+    seatGuide: "Seat 1 is on the sweetheart table side; the other seats follow clockwise.",
     presentedBy: "Presented By",
     findSeat: "Please Find Your Seat",
     searchPlaceholder: "Search your name...",
@@ -60,9 +101,10 @@ const translations = {
     syncList: "Sync Guest List",
   },
   ja: {
+    roomLayout: "会場レイアウト",
     seatNumber: "座席番号",
     sweetheart: "高砂席",
-    seatGuide: "1番は高砂席に一番近いお席です。番号は時計回りに続きます。",
+    seatGuide: "1番は高砂側のお席です。そこから時計回りに番号が続きます。",
     presentedBy: "プロデュース",
     findSeat: "お席をご確認ください",
     searchPlaceholder: "お名前を検索...",
@@ -77,21 +119,22 @@ const translations = {
     syncList: "ゲストリストを同期",
   },
   my: {
+    roomLayout: "ခန်းမ အပြင်အဆင်",
     seatNumber: "ထိုင်ခုံအမှတ်",
-    sweetheart: "သတို့သားသတို့သမီး စားပွဲ",
-    seatGuide: "ထိုင်ခုံ ၁ သည် သတို့သားသတို့သမီး စားပွဲနှင့် အနီးဆုံးဖြစ်ပြီး နာရီလက်တံအတိုင်း ဆက်လက်စီထားပါသည်။",
+    sweetheart: "သတို့သား၊ သတို့သမီး စားပွဲ",
+    seatGuide: "ထိုင်ခုံ ၁ သည် သတို့သား၊ သတို့သမီး စားပွဲဘက်တွင် ရှိပြီး ကျန်ထိုင်ခုံများကို နာရီလက်တံအတိုင်း စီထားပါသည်။",
     presentedBy: "စီစဉ်တင်ဆက်သူ",
-    findSeat: "သင်၏ထိုင်ခုံကို ရှာဖွေပါ",
-    searchPlaceholder: "သင်၏အမည်ကို ရှာဖွေပါ...",
-    emptyState: "သင်၏စားပွဲအမှတ်ကို သိရှိရန် အမည်ရိုက်ထည့်ပါ",
+    findSeat: "သင့်ထိုင်ခုံကို ရှာဖွေပါ",
+    searchPlaceholder: "သင့်အမည်ကို ရိုက်ထည့်ပါ...",
+    emptyState: "စားပွဲနှင့် ထိုင်ခုံအမှတ်ကို သိရှိရန် သင့်အမည်ကို ရိုက်ထည့်ပါ",
     tableNumber: "စားပွဲအမှတ်",
-    guestNotFound: "ဧည့်သည်အမည် မတွေ့ရှိပါ",
-    noMatch: "「{query}」နှင့် ကိုက်ညီသော အမည်မတွေ့ရှိပါ။ စာလုံးပေါင်း ပြန်စစ်ပါ သို့မဟုတ် ဝန်ထမ်းများကို မေးမြန်းပါ။",
+    guestNotFound: "အမည် ရှာမတွေ့ပါ",
+    noMatch: "“{query}” နှင့် ကိုက်ညီသော အမည်ကို ရှာမတွေ့ပါ။ စာလုံးပေါင်းကို ပြန်စစ်ပေးပါ သို့မဟုတ် ဧည့်ကြိုဝန်ထမ်းများကို မေးမြန်းပေးပါ။",
     professionalService: "ပရော်ဖက်ရှင်နယ် ပွဲစီစဉ်ခြင်းနှင့် ဒီဇိုင်း",
-    visitPortfolio: "ကျွန်ုပ်တို့၏ လုပ်ဆောင်ချက်များကို ကြည့်ရှုရန်",
+    visitPortfolio: "ကျွန်ုပ်တို့၏ လက်ရာများကို ကြည့်ရှုရန်",
     contactSocial: "ဆက်သွယ်ရန်",
-    updatingData: "ဒေတာများ အပ်ဒိတ်လုပ်နေသည်...",
-    syncList: "ဧည့်စာရင်းကို ထပ်မံရယူရန်",
+    updatingData: "ဒေတာ အပ်ဒိတ်လုပ်နေပါသည်...",
+    syncList: "ဧည့်စာရင်းကို ပြန်လည်ရယူရန်",
   }
 };
 
@@ -106,6 +149,7 @@ export default function App() {
   const [googleSheetId, setGoogleSheetId] = useState('');
   const [eventName, setEventName] = useState('Event Seating');
   const [seatsPerTable, setSeatsPerTable] = useState(8);
+  const [floorRows, setFloorRows] = useState<string[][] | null>(null);
 
   const extractSheetId = (input: string) => {
     if (!input) return '';
@@ -150,6 +194,7 @@ export default function App() {
       } else if (config.guests && Array.isArray(config.guests)) {
         if (config.eventName) setEventName(config.eventName);
         if (config.seatsPerTable) setSeatsPerTable(Number(config.seatsPerTable));
+        setFloorRows(config.floorPlan?.rows ?? null);
         setGuests(config.guests);
         setGoogleSheetId(''); // Clear sheet ID if using local data
       }
@@ -252,7 +297,7 @@ export default function App() {
   }, [searchQuery, guests]);
 
   return (
-    <div className="min-h-screen bg-[#FDFCF0] relative overflow-hidden flex flex-col items-center px-6 py-12 md:py-20 transition-colors duration-700 font-sans text-stone-900">
+    <div lang={language} className="min-h-screen bg-[#FDFCF0] relative overflow-hidden flex flex-col items-center px-6 py-12 md:py-20 transition-colors duration-700 font-sans text-stone-900">
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-gold/5 blur-[120px]" />
@@ -366,16 +411,20 @@ export default function App() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="space-y-6"
+                className="space-y-10"
               >
+                {floorRows && (
+                  <FloorPlan rows={floorRows} tables={filteredGuests.map(g => g.tableNumber)} sweetheart={t.sweetheart} title={t.roomLayout} />
+                )}
                 {filteredGuests.map((guest, index) => (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
                     key={`${guest.name}-${index}`}
-                    className="bg-white/50 backdrop-blur-sm p-6 md:p-10 rounded-3xl border border-stone-100 group hover:bg-white hover:shadow-2xl hover:shadow-gold/5 transition-all duration-500"
+                    className="relative overflow-hidden bg-white p-6 pt-8 md:p-10 rounded-3xl border border-stone-200 shadow-[0_8px_30px_rgba(120,100,40,0.08)] group hover:shadow-2xl hover:shadow-gold/10 transition-all duration-500"
                   >
+                    <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-gold/40 via-gold to-gold/40" />
                     <div className="flex flex-col md:flex-row justify-between items-center">
                     <div className="flex items-center gap-6 mb-4 md:mb-0">
                       <div className="w-12 h-12 rounded-full border border-gold/20 flex items-center justify-center text-stone-400 group-hover:bg-gold group-hover:text-white group-hover:border-gold transition-all duration-500 shadow-sm">

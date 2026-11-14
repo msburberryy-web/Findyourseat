@@ -289,5 +289,21 @@
       "seatNumber": 8
     }
   ],
-  "seatsPerTable": 8
+  "seatsPerTable": 8,
+  "floorPlan": {
+    "rows": [
+      [
+        "A",
+        "C",
+        "E",
+        "G"
+      ],
+      [
+        "B",
+        "D",
+        "F",
+        "H"
+      ]
+    ]
+  }
 }
