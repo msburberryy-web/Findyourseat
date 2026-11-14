@@ -1,9 +1,8 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500&display=swap');
 
 @theme {
-  --font-serif: "Playfair Display", "Noto Serif Myanmar", serif;
-  --font-sans: "Inter", "Noto Sans Myanmar", sans-serif;
+  --font-serif: "Playfair Display Variable", "Playfair Display", "Noto Serif Myanmar", serif;
+  --font-sans: "Inter Variable", "Inter", "Noto Sans Myanmar", sans-serif;
   --color-gold: #D4AF37;
   --color-cream: #FDFCF0;
 }
@@ -13,10 +12,8 @@ body {
 }
 
 /* Burmese: no letter spacing, no italics, taller lines so stacked marks aren't clipped */
-[lang="my"] [class*="tracking-["],
-[lang="my"] [class*="tracking-wide"],
-[lang="my"] [class*="tracking-wider"],
-[lang="my"] [class*="tracking-widest"],
+[lang="my"] [class*="tracking-["]:not([lang="en"]),
+[lang="my"] [class*="tracking-wide"]:not([lang="en"]),
 [lang="my"] input,
 [lang="my"] input::placeholder,
 [lang="my"] svg text {

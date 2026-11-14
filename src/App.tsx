@@ -19,7 +19,7 @@ function FloorPlan({ rows, tables, sweetheart, title }: { rows: string[][]; tabl
       <span className="text-gold text-[10px] font-bold uppercase tracking-[0.3em] mb-3">{title}</span>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[340px]" role="img" aria-label={title}>
         <rect x={W / 2 - 95} y="6" width="190" height="30" rx="4" fill="#FDFCF0" stroke="#D4AF37" strokeWidth="1.5" />
-        <text x={W / 2} y="26" textAnchor="middle" fontSize="12" fill="#a8892a" fontFamily="Playfair Display, Noto Serif Myanmar, serif">♥ {sweetheart} ♥</text>
+        <text x={W / 2} y="26" textAnchor="middle" fontSize="12" fill="#a8892a" fontFamily="Playfair Display Variable, Playfair Display, Noto Serif Myanmar, serif">♥ {sweetheart} ♥</text>
         {rows.map((row, ri) =>
           row.map((name, ci) => {
             const on = hl.has(String(name));
@@ -27,7 +27,7 @@ function FloorPlan({ rows, tables, sweetheart, title }: { rows: string[][]; tabl
             return (
               <g key={name}>
                 <circle cx={x} cy={y} r={on ? R + 3 : R} fill={on ? '#D4AF37' : '#ffffff'} stroke={on ? '#D4AF37' : '#d6d3d1'} strokeWidth="1.5" />
-                <text x={x} y={y + 6} textAnchor="middle" fontSize={on ? 18 : 16} fontWeight={on ? 700 : 400} fill={on ? '#ffffff' : '#78716c'} fontFamily="Playfair Display, serif">{name}</text>
+                <text x={x} y={y + 6} textAnchor="middle" fontSize={on ? 18 : 16} fontWeight={on ? 700 : 400} fill={on ? '#ffffff' : '#78716c'} fontFamily="Playfair Display Variable, Playfair Display, serif">{name}</text>
               </g>
             );
           })
@@ -43,7 +43,7 @@ function SeatDiagram({ table, seat, total, sweetheart, guide }: { table: string 
     <div className="w-full flex flex-col items-center mt-6 pt-6 border-t border-stone-100">
       <svg viewBox="0 0 300 280" className="w-full max-w-[280px]" role="img" aria-label={`${guide}`}>
         <rect x="70" y="8" width="160" height="34" rx="17" fill="none" stroke="#D4AF37" strokeWidth="1.5" />
-        <text x="150" y="30" textAnchor="middle" fontSize="12" fill="#a8892a" fontFamily="Playfair Display, Noto Serif Myanmar, serif">♥ {sweetheart} ♥</text>
+        <text x="150" y="30" textAnchor="middle" fontSize="12" fill="#a8892a" fontFamily="Playfair Display Variable, Playfair Display, Noto Serif Myanmar, serif">♥ {sweetheart} ♥</text>
         <defs>
           <marker id="cw-head" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
             <path d="M0,0 L10,5 L0,10 z" fill="#D4AF37" />
@@ -56,7 +56,7 @@ function SeatDiagram({ table, seat, total, sweetheart, guide }: { table: string 
           return <path d={`M${x1},${y1} A${ar},${ar} 0 0 1 ${x2},${y2}`} fill="none" stroke="#D4AF37" strokeWidth="1.5" markerEnd="url(#cw-head)" />;
         })()}
         <circle cx={cx} cy={cy} r={r} fill="#FDFCF0" stroke="#d6d3d1" strokeWidth="1.5" />
-        <text x={cx} y={cy + 10} textAnchor="middle" fontSize="30" fill="#44403c" fontFamily="Playfair Display, serif">{table}</text>
+        <text x={cx} y={cy + 10} textAnchor="middle" fontSize="30" fill="#44403c" fontFamily="Playfair Display Variable, Playfair Display, serif">{table}</text>
         {Array.from({ length: total }, (_, i) => {
           const n = i + 1;
           const ang = -Math.PI / 2 + (2 * Math.PI * i) / total; // seat 1 at top (nearest sweetheart), clockwise
@@ -65,7 +65,7 @@ function SeatDiagram({ table, seat, total, sweetheart, guide }: { table: string 
           return (
             <g key={n}>
               <circle cx={x} cy={y} r={on ? 15 : 12} fill={on ? '#D4AF37' : '#ffffff'} stroke={on ? '#D4AF37' : '#d6d3d1'} strokeWidth="1.5" />
-              <text x={x} y={y + 4.5} textAnchor="middle" fontSize={on ? 14 : 12} fontWeight={on ? 700 : 400} fill={on ? '#ffffff' : '#78716c'} fontFamily="Inter, sans-serif">{n}</text>
+              <text x={x} y={y + 4.5} textAnchor="middle" fontSize={on ? 14 : 12} fontWeight={on ? 700 : 400} fill={on ? '#ffffff' : '#78716c'} fontFamily="Inter Variable, Inter, sans-serif">{n}</text>
             </g>
           );
         })}
@@ -312,6 +312,7 @@ export default function App() {
         {(['en', 'ja', 'my'] as const).map((lang) => (
           <button
             key={lang}
+            lang="en"
             onClick={() => setLanguage(lang)}
             className={cn(
               "px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full transition-all",
@@ -502,6 +503,7 @@ export default function App() {
             href="https://www.facebook.com/p/Amor%C3%A9wedding-Tokyo-61575756988945/" 
             target="_blank" 
             rel="noopener noreferrer"
+            lang="en"
             className="text-stone-600 hover:text-gold transition-colors text-[11px] tracking-wider break-all max-w-xs md:max-w-none font-medium"
           >
             facebook.com/p/Amoréwedding-Tokyo-61575756988945/
@@ -525,7 +527,7 @@ export default function App() {
 
         <div className="h-px w-24 bg-gold/20 mb-8" />
         
-        <p className="text-stone-400 text-[9px] uppercase tracking-[0.4em] font-medium">
+        <p lang="en" className="text-stone-400 text-[9px] uppercase tracking-[0.4em] font-medium">
           &copy; {new Date().getFullYear()} Amoré Wedding Tokyo. All Rights Reserved.
         </p>
       </motion.div>

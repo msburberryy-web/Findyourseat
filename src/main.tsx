@@ -1,3 +1,6 @@
+import '@fontsource-variable/inter';
+import '@fontsource-variable/playfair-display/wght.css';
+import '@fontsource-variable/playfair-display/wght-italic.css';
 import '@fontsource/noto-sans-myanmar/400.css';
 import '@fontsource/noto-sans-myanmar/700.css';
 import '@fontsource/noto-serif-myanmar/400.css';
