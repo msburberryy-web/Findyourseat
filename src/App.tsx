@@ -91,7 +91,7 @@ const translations = {
     findSeat: "Please Find Your Seat",
     searchPlaceholder: "Search your name...",
     emptyState: "Enter your name to see your table assignment",
-    tableNumber: "Table Number",
+    tableNumber: "Table",
     guestNotFound: "Guest Not Found",
     noMatch: "We couldn't find a match for \"{query}\". Please check the spelling or consult our welcome staff.",
     professionalService: "Professional Event Planning & Design",
@@ -434,20 +434,18 @@ export default function App() {
                         {guest.name}
                       </span>
                     </div>
-                    <div className="flex flex-col items-center md:items-end">
-                      <span className="text-gold text-[10px] font-bold uppercase tracking-[0.3em] mb-1">{t.tableNumber}</span>
-                      <span className="font-serif text-4xl md:text-6xl text-stone-800 group-hover:scale-110 transition-transform duration-500">
-                        {guest.tableNumber}
-                      </span>
-                    </div>
-                    {guest.seatNumber !== undefined && guest.seatNumber !== '' && (
-                      <div className="flex flex-col items-center md:items-end md:ml-10 mt-4 md:mt-0">
-                        <span className="text-gold text-[10px] font-bold uppercase tracking-[0.3em] mb-1">{t.seatNumber}</span>
-                        <span className="font-serif text-4xl md:text-6xl text-stone-800 group-hover:scale-110 transition-transform duration-500">
-                          {guest.seatNumber}
-                        </span>
+                    <div className="flex items-stretch justify-center">
+                      <div className="flex flex-col items-center px-6 md:px-8">
+                        <span className="text-gold text-[10px] font-bold uppercase tracking-[0.3em] mb-1">{t.tableNumber}</span>
+                        <span className="font-serif text-4xl md:text-5xl text-stone-800 leading-none mt-1">{guest.tableNumber}</span>
                       </div>
-                    )}
+                      {guest.seatNumber !== undefined && guest.seatNumber !== '' && (
+                        <div className="flex flex-col items-center px-6 md:px-8 border-l border-gold/30">
+                          <span className="text-gold text-[10px] font-bold uppercase tracking-[0.3em] mb-1">{t.seatNumber}</span>
+                          <span className="font-serif text-4xl md:text-5xl text-stone-800 leading-none mt-1">{guest.seatNumber}</span>
+                        </div>
+                      )}
+                    </div>
                     </div>
                     {guest.seatNumber !== undefined && guest.seatNumber !== '' && (
                       <SeatDiagram table={guest.tableNumber} seat={Number(guest.seatNumber)} total={seatsPerTable} sweetheart={t.sweetheart} guide={t.seatGuide} />
